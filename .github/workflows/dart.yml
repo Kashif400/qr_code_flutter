@@ -19,13 +19,8 @@ jobs:
 
       - name: Install CocoaPods dependencies
         run: |
-          if [ -d "ios" ]; then
-            cd ios
-            pod install
-          else
-            echo "ios directory not found"
-            exit 1
-          fi
+          cd ios
+          pod install
 
       - name: Clean build
         run: flutter clean
