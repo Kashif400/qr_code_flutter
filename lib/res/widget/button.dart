@@ -62,30 +62,32 @@ class RoundButton extends StatelessWidget {
                       ),
                     ),
                     SizedBox(
-                      width: size.width * 0.05,
+                      width: size.width * 0.02,
                     ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: TextStyle(
-                              fontFamily: TFont.loraBold,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                        SizedBox(
-                          height: 4,
-                        ),
-                        Text(
-                          content,
-                          style: TextStyle(
-                              fontFamily: TFont.ralewayRegular,
-                              fontSize: 15,
-                              color: Colors.white),
-                        )
-                      ],
+                    Flexible(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            title,
+                            style: TextStyle(
+                                fontFamily: TFont.loraBold,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                          SizedBox(
+                            height: 4,
+                          ),
+                          Text(
+                            content,
+                            style: TextStyle(
+                                fontFamily: TFont.ralewayRegular,
+                                fontSize: 14,
+                                color: Colors.white),
+                          )
+                        ],
+                      ),
                     )
                   ],
                 )

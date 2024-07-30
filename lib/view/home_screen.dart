@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
@@ -25,11 +26,11 @@ class _HomeScreenState extends State<HomeScreen> {
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _scanFromGallery() async {
-    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
-    if (pickedFile != null) {
-      final filePath = pickedFile.path;
-      final image = img.decodeImage(File(filePath).readAsBytesSync());
-      if (image != null) {
+    try {
+      final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+      if (pickedFile != null) {
+        final filePath = pickedFile.path;
         final inputImage = InputImage.fromFilePath(filePath);
         final barcodeScanner = GoogleMlKit.vision.barcodeScanner();
         final barcodes = await barcodeScanner.processImage(inputImage);
@@ -37,29 +38,38 @@ class _HomeScreenState extends State<HomeScreen> {
 
         if (barcodes.isNotEmpty) {
           final qrCode = barcodes.first.rawValue ?? 'No QR Code found';
-          context.read<QRCodeProvider>().updateQRCode(qrCode);
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => QRCodeDetailScreen(),
-            ),
-          );
+          // Update state with the QR code value
+          print('QR Code: $qrCode');
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('No QR Code found in the image')),
           );
         }
+      } else {
+        print('User canceled the picker');
       }
+    } on PlatformException catch (e) {
+      if (e.code == 'photo_access_denied') {
+        // Handle the permission denial case
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Photo access is required to select images')),
+        );
+      } else {
+        // Handle other possible exceptions
+        print('Failed to pick image: $e');
+      }
+    } catch (e) {
+      // Handle any other exceptions
+      print('An error occurred: $e');
     }
   }
-
   @override
   void reassemble() {
     super.reassemble();
     if (Platform.isAndroid) {
-      controller!.pauseCamera();
+      controller?.pauseCamera();
     } else if (Platform.isIOS) {
-      controller!.resumeCamera();
+      controller?.resumeCamera();
     }
   }
 
